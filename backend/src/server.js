@@ -4,6 +4,8 @@ import { connectDB } from "./config/db.js";
 import dotenv from "dotenv";
 import rateLimiter from "./middleware/ratelimiter.js";  
 import cors from "cors";
+import path from "path";
+
 
 dotenv.config();
 
@@ -11,10 +13,12 @@ dotenv.config();
 
 const app = express();
 const PORT=process.env.PORT || 5001
+const __dirname = path.resolve();
 
-app.use(cors({
+if(process.env.NODE_ENV !== "production"){
+  app.use(cors({
   origin: "http://localhost:5173"
-}));
+}))}
 
 app.use(express.json()); // Middleware to parse JSON request bodies: req.body
  
@@ -28,6 +32,13 @@ app.use(rateLimiter);
 
 app.use("/api/notes", notesRoutes);
 
+if(process.env.NODE_ENV === "production"){
+  app.use(express.static(path.join(__dirname, "../frontend/dist")))
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"))
+})
+}
 connectDB().then(() => {
 app.listen(PORT, () => {
   console.log("Server is running now on port 5001", PORT);
