@@ -32,17 +32,28 @@ app.use(rateLimiter);
 
 app.use("/api/notes", notesRoutes);
 
-if (process.env.NODE_ENV === "production") {
-  // Yeh line backend folder se bahar nikal kar frontend/dist ka exact absolute path banaye gi
-  const frontendBuildPath = path.resolve(__dirname, "..", "frontend", "dist");
+// Absolute path design karein root folder se
+const frontendBuildPath = path.resolve(__dirname, "..", "frontend", "dist");
 
+console.log("Checking Deployment Environment...");
+console.log("NODE_ENV Value:", process.env.NODE_ENV);
+console.log("Frontend Build Path Resolved to:", frontendBuildPath);
+
+// Production condition check
+if (process.env.NODE_ENV === "production") {
+  console.log("Serving Frontend Static Files successfully.");
   app.use(express.static(frontendBuildPath));
 
   app.get("*", (req, res) => {
     res.sendFile(path.join(frontendBuildPath, "index.html"));
   });
+} else {
+  console.log("WARNING: App is NOT running in production mode fallback.");
+  // Fallback root route for testing
+  app.get("/", (req, res) => {
+    res.send("Backend API is up, but frontend is not serving. Check NODE_ENV.");
+  });
 }
-
 
 connectDB().then(() => {
   app.listen(PORT, () => {
