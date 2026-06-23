@@ -33,11 +33,16 @@ app.use(rateLimiter);
 app.use("/api/notes", notesRoutes);
 
 if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "frontend/dist")));
-  app.get("/{*path}", (req, res) => {
-    res.sendFile(path.join(__dirname, "frontend/dist/index.html"));
+  // Yeh line backend folder se bahar nikal kar frontend/dist ka exact absolute path banaye gi
+  const frontendBuildPath = path.resolve(__dirname, "..", "frontend", "dist");
+
+  app.use(express.static(frontendBuildPath));
+
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(frontendBuildPath, "index.html"));
   });
 }
+
 
 connectDB().then(() => {
   app.listen(PORT, () => {
