@@ -15,14 +15,18 @@ Highlights:
 🌐 Explore HTTP Methods, Status Codes & SQL vs NoSQL
 📦 Deployment Guide Included — Add the Live App to Your Resume
 📚 Designed for Absolute Beginners
+
 🧪 .env Setup
+
 Backend (/backend)
+```
 MONGO_URI=<your_mongo_uri>
 
 UPSTASH_REDIS_REST_URL=<your_redis_rest_url>
 UPSTASH_REDIS_REST_TOKEN=<your_redis_rest_token>
 
 NODE_ENV=development
+```
 
 🔧 Run the Backend
 
